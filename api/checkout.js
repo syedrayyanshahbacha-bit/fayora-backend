@@ -1,6 +1,15 @@
-// routes/orders.js
-export const createOrder = async (req, res) => {
+// api/checkout.js
+import connectDB from '../config/db.js';
+import Order from '../models/Order.js'; // Assuming you have an Order model
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
+    await connectDB();
+
     const { name, email, items, province, discountCode } = req.body;
 
     const deliveryFees = {
@@ -16,23 +25,30 @@ export const createOrder = async (req, res) => {
     const discount = discountCode === "FAYORA10" ? 0.10 : 0;
     const total = subtotal + deliveryFee - subtotal * discount;
 
-    // Save to MongoDB (add your model logic here)
-    // Send email (use nodemailer)
+    // Save order to MongoDB
+    const newOrder = new Order({
+      name,
+      email,
+      items,
+      province,
+      discountCode,
+      deliveryFee,
+      total
+    });
+
+    await newOrder.save();
+
+    // Optional: Send confirmation email here
 
     res.status(200).json({
       success: true,
       total,
       deliveryFee,
       discountApplied: discount * 100,
-      message: "Order confirmed"
+      message: "Checkout successful. Order saved."
     });
   } catch (err) {
-    console.error('Order error:', err);
+    console.error('Checkout error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
-};
-
-export const getOrders = async (req, res) => {
-  // Optional: return list of orders from DB
-  res.status(200).json({ message: "GET orders route working" });
-};
+}

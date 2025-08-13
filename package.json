@@ -1,13 +1,13 @@
 {
   "name": "fayora-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "FAYORA backend API for orders and checkout",
   "scripts": {
+    "dev": "nodemon api/orders.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["fayora", "backend", "api", "vercel"],
+  "author": "Syed",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
